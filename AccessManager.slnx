@@ -1,2 +1,7 @@
 <Solution>
+  <Project Path="AccessManager.Application/AccessManager.Application.csproj" />
+  <Project Path="AccessManager.Console/AccessManager.Console.csproj" />
+  <Project Path="AccessManager.Domain/AccessManager.Domain.csproj" />
+  <Project Path="AccessManager.Infrastructure/AccessManager.Infrastructure.csproj" />
+  <Project Path="AccessManager.Tests/AccessManager.Tests.csproj" />
 </Solution>
