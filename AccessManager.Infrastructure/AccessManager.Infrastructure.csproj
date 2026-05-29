@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AccessManager.Application\AccessManager.Application.csproj" />
+    <ProjectReference Include="..\AccessManager.Domain\AccessManager.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
