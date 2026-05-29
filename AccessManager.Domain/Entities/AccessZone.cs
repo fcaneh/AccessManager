@@ -8,7 +8,7 @@ namespace AccessManager.Domain.Entities
 {
     public class AccessZone
     {
-        public Guid ZoneId { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; } = string.Empty;
         public AccessLevel RequiredAccessLevel { get; set; }
     }
