@@ -1,0 +1,22 @@
+1 - Demander l'accès à une zone via un badge
+
+L'utilisateur présente son badge devant la borne.
+
+La borne transmet au serveur :
+
+- BadgeNumber
+- ZoneId
+
+L'application reçoit ces informations via un CheckAccessQuery.
+
+Le CheckAccessHandler :
+
+- récupère le User à partir du BadgeNumber
+- récupère la AccessZone à partir du ZoneId
+- vérifie que l'utilisateur existe
+- vérifie que l'utilisateur est actif
+- vérifie que son AccessLevel est suffisant (User.AccessLevel == AccessZone.RequiredAccessLevel
+
+Le résultat est enregistré dans un AccessAttempt.
+
+L'Application retourne un CheckAccessResponse contenant un AccessResult.
