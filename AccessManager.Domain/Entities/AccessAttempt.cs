@@ -11,6 +11,7 @@ namespace AccessManager.Domain.Entities
         public Guid? UserId { get; set; }
         public string BadgeNumber { get; set; } = string.Empty;
         public Guid AccessZoneId { get; set; }
+        public string ZoneName { get; set; }
         public DateTime AttemptTime { get; set; } = DateTime.UtcNow;
         public AccessResult AccessResult { get; set; }
     }

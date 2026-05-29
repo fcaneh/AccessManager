@@ -10,5 +10,6 @@ namespace AccessManager.Domain.Enums
         UserNotFound,
         BadgeDisabled,
         InsufficientAccessLevel,
+        ZoneNotFound
     }
 }
