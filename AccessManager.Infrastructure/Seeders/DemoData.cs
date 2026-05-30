@@ -8,7 +8,7 @@ namespace AccessManager.Infrastructure.Seeders
 {
     public static class DemoData
     {
-        public static List<User> Users => new()
+        public static List<User> Users = new()
         {
             new User
             {
@@ -61,7 +61,7 @@ namespace AccessManager.Infrastructure.Seeders
             }
         };
 
-    public static List<AccessZone> Zones => new()
+    public static List<AccessZone> Zones = new()
         {
             new AccessZone
             {
