@@ -9,6 +9,7 @@ using AccessManager.Domain.Entities;
 using AccessManager.Infrastructure.Repositories;
 using AccessManager.Domain.Enums;
 using AccessManager.Application.Features.Users.DisableUser;
+using AccessManager.Application.Features.Statistics;
 
 namespace AccessManager.ConsoleApp
 {
@@ -43,6 +44,9 @@ namespace AccessManager.ConsoleApp
             var disableUserHandler =
                 new DisableUserHandler(userRepository);
 
+            var getStatisticsHandler =
+                new GetStatisticsHandler(userRepository, accessAttemptRepository);
+
             ShowMenu(
                 checkAccessHandler,
                 getAllUsersHandler,
@@ -50,7 +54,8 @@ namespace AccessManager.ConsoleApp
                 accessZoneRepository,
                 getAllAccessAttempsHandler,
                 createUserHandler,
-                disableUserHandler);
+                disableUserHandler,
+                getStatisticsHandler);
 
         }
 
@@ -61,7 +66,8 @@ namespace AccessManager.ConsoleApp
             IAccessZoneRepository accessZoneRepository,
             GetAllAccessAttemptsHandler getAllAccessAttempsHandler,
             CreateUserHandler createUserHandler,
-            DisableUserHandler disableUserHandler
+            DisableUserHandler disableUserHandler,
+            GetStatisticsHandler getStatisticsHandler
            )
         {
             while (true)
@@ -74,6 +80,7 @@ namespace AccessManager.ConsoleApp
                 Console.WriteLine("4. Afficher les demandes d'accès");
                 Console.WriteLine("5. Créer un utilisateur");
                 Console.WriteLine("6. Désactiver un utilisateur");
+                Console.WriteLine("7. Afficher les statistiques");
                 Console.WriteLine("0. Quitter");
                 Console.Write("Choisissez une option : ");
 
@@ -108,6 +115,10 @@ namespace AccessManager.ConsoleApp
                         DisableUser(
                             getAllUsersHandler,
                             disableUserHandler);
+                        break;
+
+                    case "7":
+                        ShowStatistics(getStatisticsHandler);
                         break;
 
                     case "0":
@@ -273,7 +284,7 @@ namespace AccessManager.ConsoleApp
             Console.WriteLine(response.Message);
         }
 
-        private static void DisableUser( GetAllUsersHandler getAllUsersHandler,DisableUserHandler disableUserHandler)
+        private static void DisableUser(GetAllUsersHandler getAllUsersHandler, DisableUserHandler disableUserHandler)
         {
             Console.WriteLine();
             Console.WriteLine("--- Désactiver un utilisateur ---");
@@ -288,7 +299,7 @@ namespace AccessManager.ConsoleApp
                 Console.WriteLine(
                     $"{user.FirstName} {user.LastName} | " +
                     $"Badge : {user.BadgeNumber} ");
-            } 
+            }
 
             Console.Write("Numéro de badge : ");
             var badgeNumber = Console.ReadLine();
@@ -298,6 +309,20 @@ namespace AccessManager.ConsoleApp
             };
             var response = disableUserHandler.Handle(command);
             Console.WriteLine(response.Message);
+        }
+
+        private static void ShowStatistics(GetStatisticsHandler getStatisticsHandler)
+        {
+            var response = getStatisticsHandler.Handle(new GetStatisticsQuery());
+            Console.WriteLine();
+            Console.WriteLine("--- Statistiques ---");
+            Console.WriteLine($"Nombre total d'utilisateurs : {response.UsersCount}");
+            Console.WriteLine($"Nombre total d'utilisateurs actifs: {response.ActiveUsersCount}");
+            Console.WriteLine($"Nombre total d'utilisateurs inactifs: {response.InactiveUsersCount}");
+            Console.WriteLine($"Nombre total de demandes d'accès : {response.TotalAccessAttempts}");
+            Console.WriteLine($"Nombre total d'accès autorisés : {response.GrantedAccessAttempts}");
+            Console.WriteLine($"Nombre total d'accès refusés : {response.DeniedAccessAttempts}");
+            Console.WriteLine($"Zone ayant reçu le plus de demandes d'accès : {response.MostUsedZone}");
         }
     }
 }
