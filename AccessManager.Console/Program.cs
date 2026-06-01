@@ -2,10 +2,12 @@
 using AccessManager.Application.Contracts;
 using AccessManager.Application.Features.Access.CheckAccess;
 using AccessManager.Application.Features.AccessAttemps.GetAllAccessAttemps;
+using AccessManager.Application.Features.Users.CreateUser;
 using AccessManager.Application.Features.Users.GetAllUsers;
 using AccessManager.Application.Features.Users.GetUserByBadgeNumber;
 using AccessManager.Domain.Entities;
 using AccessManager.Infrastructure.Repositories;
+using AccessManager.Domain.Enums;
 
 namespace AccessManager.ConsoleApp
 {
@@ -18,7 +20,7 @@ namespace AccessManager.ConsoleApp
             var userRepository = new UserRepository();
             var accessZoneRepository = new AccessZoneRepository();
             var accessAttemptRepository = new AccessAttemptRepository();
-            
+
             var getAllAccessAttempsHandler =
                 new GetAllAccessAttemptsHandler(accessAttemptRepository);
 
@@ -34,12 +36,17 @@ namespace AccessManager.ConsoleApp
             var getUserByBadgeNumberHandler =
                 new GetUserByBadgeNumberHandler(userRepository);
 
+            var createUserHandler =
+                new CreateUserHandler(userRepository);
+
             ShowMenu(
                 checkAccessHandler,
                 getAllUsersHandler,
                 getUserByBadgeNumberHandler,
                 accessZoneRepository,
-                getAllAccessAttempsHandler);
+                getAllAccessAttempsHandler,
+                createUserHandler);
+
         }
 
         private static void ShowMenu(
@@ -47,7 +54,8 @@ namespace AccessManager.ConsoleApp
             GetAllUsersHandler getAllUsersHandler,
             GetUserByBadgeNumberHandler getUserByBadgeNumberHandler,
             IAccessZoneRepository accessZoneRepository,
-            GetAllAccessAttemptsHandler getAllAccessAttempsHandler
+            GetAllAccessAttemptsHandler getAllAccessAttempsHandler,
+            CreateUserHandler createUserHandler
            )
         {
             while (true)
@@ -58,6 +66,7 @@ namespace AccessManager.ConsoleApp
                 Console.WriteLine("2. Afficher tous les utilisateurs");
                 Console.WriteLine("3. Rechercher un utilisateur");
                 Console.WriteLine("4. Afficher les demandes d'accès");
+                Console.WriteLine("5. Créer un utilisateur");
                 Console.WriteLine("0. Quitter");
                 Console.Write("Choisissez une option : ");
 
@@ -82,6 +91,10 @@ namespace AccessManager.ConsoleApp
 
                     case "4":
                         GetAllAccessAttempts(getAllAccessAttempsHandler);
+                        break;
+
+                    case "5":
+                        CreateUser(createUserHandler);
                         break;
 
                     case "0":
@@ -211,6 +224,40 @@ namespace AccessManager.ConsoleApp
                                         $"Time : {attempt.AttemptTime} | " +
                                         $"Niveau : {attempt.AccessResult}");
             }
+        }
+
+        private static void CreateUser(CreateUserHandler createUserHandler)
+        {
+            Console.WriteLine();
+            Console.WriteLine("--- Créer un utilisateur ---");
+            Console.Write("Prénom : ");
+            var firstName = Console.ReadLine();
+            Console.Write("Nom : ");
+            var lastName = Console.ReadLine();
+            Console.Write("Numéro de badge : ");
+            var badgeNumber = Console.ReadLine();
+
+            Console.WriteLine("Niveau d'accès : ");
+            foreach (var level in Enum.GetValues<AccessLevel>())
+            {
+                Console.WriteLine($"{(int)level} - {level}");
+            }
+            var accessLevelInput = Console.ReadLine();
+            if (!int.TryParse(accessLevelInput, out var accessLevelInt) || !Enum.IsDefined(typeof(AccessLevel), accessLevelInt))
+            {
+                Console.WriteLine("Niveau d'accès invalide.");
+                return;
+            }
+            var accessLevel = (AccessLevel)accessLevelInt;
+            var command = new CreateUserCommand
+            {
+                FirstName = firstName ?? string.Empty,
+                LastName = lastName ?? string.Empty,
+                BadgeNumber = badgeNumber ?? string.Empty,
+                AccessLevel = accessLevel
+            };
+            var response = createUserHandler.Handle(command);
+            Console.WriteLine(response.Message);
         }
     }
 }

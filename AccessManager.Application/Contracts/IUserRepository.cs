@@ -9,6 +9,7 @@ namespace AccessManager.Application.Contracts
     {
         IEnumerable<User> GetAllUsers();
         User? GetUserByBadgeNumber(string badgeNumber);
+        void CreateUser(User user);
 
     }
 }

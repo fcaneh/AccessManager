@@ -21,5 +21,10 @@ namespace AccessManager.Infrastructure.Repositories
         {
             return _users.FirstOrDefault(u => u.BadgeNumber == badgeNumber);
         }
+
+        public void CreateUser(User user)
+        {
+            _users.Add(user);
+        }
     }
 }

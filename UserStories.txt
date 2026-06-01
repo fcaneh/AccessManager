@@ -70,3 +70,20 @@ L'application affiche :
 
 ------------------------------------------------------------------------------------------------
 
+5 - Créer un utilisateur
+
+L'opérateur saisit :
+-> prénom
+-> nom
+-> numéro de badge
+-> niveau d'accès
+
+L'application vérifie que le numéro de badge n'existe pas déjà.
+
+Si le badge existe :
+    Retour BadgeAlreadyExists
+
+Sinon :
+    Création du User
+    Sauvegarde dans UserRepository
+    Retour Success
