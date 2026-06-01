@@ -29,8 +29,16 @@ namespace AccessManager.Infrastructure.Repositories
 
         public void DisableUser(User user)
         {
-            var existingUser = _users.FirstOrDefault(u => u.BadgeNumber == user.BadgeNumber);
-            if(existingUser != null) existingUser.IsActive = false;
+            // Version qui serait nécessaire avec une copie des objets :
+            //
+            // var existingUser = _users.FirstOrDefault(
+            //     u => u.BadgeNumber == user.BadgeNumber);
+            //
+            // if (existingUser != null)
+            // {
+            //     existingUser.IsActive = false;
+            // }
+            // ainsi que dans le cas d'une base de données, il faudrait faire une mise à jour de l'entité.
         }
     }
 }

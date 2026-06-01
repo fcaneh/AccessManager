@@ -25,6 +25,7 @@ namespace AccessManager.Application.Features.Users.DisableUser
                     Message = "Utilisateur non trouvé"
                 };
             }
+
             if (!user.IsActive)
             {
                 return new DisableUserResponse
@@ -33,6 +34,7 @@ namespace AccessManager.Application.Features.Users.DisableUser
                     Message = "L'utilisateur est déjà désactivé"
                 };
             }
+
             user.IsActive = false;
             _userRepository.DisableUser(user);
             return new DisableUserResponse
