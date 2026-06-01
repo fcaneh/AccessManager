@@ -54,3 +54,19 @@ Afficher "Utilisateur introuvable".
 
 ------------------------------------------------------------------------------------------------
 
+4 - Afficher l'historique des accès
+
+Aucun paramètre nécessaire.
+
+Le système récupère tous les AccessAttempt.
+
+Retourne la liste triée par date décroissante.
+
+L'application affiche :
+- Date
+- Badge
+- Zone
+- Résultat
+
+------------------------------------------------------------------------------------------------
+

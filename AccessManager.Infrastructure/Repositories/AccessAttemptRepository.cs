@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Text;
 using AccessManager.Application.Contracts;
 using AccessManager.Domain.Entities;
+using AccessManager.Infrastructure.Seeders;
 
 namespace AccessManager.Infrastructure.Repositories
 {
     public class AccessAttemptRepository : IAccessAttemptRepository
     {
-        private readonly List<AccessAttempt> _accesAttempts = new();
+        private readonly List<AccessAttempt> _accessAttempts = DemoData.AccessAttempts;
 
-        public IEnumerable<AccessAttempt> GetAllAccessAttempt()
+        public IEnumerable<AccessAttempt> GetAllAccessAttempts()
         {
-            return _accesAttempts;
+            return _accessAttempts;
         }
 
         public void SaveAccessAttempt(AccessAttempt accessAttempt)
         {
-            _accesAttempts.Add(accessAttempt);
+            _accessAttempts.Add(accessAttempt);
         }
     }
 }

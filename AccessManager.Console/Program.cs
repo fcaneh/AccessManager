@@ -1,8 +1,10 @@
 ﻿using System;
 using AccessManager.Application.Contracts;
 using AccessManager.Application.Features.Access.CheckAccess;
+using AccessManager.Application.Features.AccessAttemps.GetAllAccessAttemps;
 using AccessManager.Application.Features.Users.GetAllUsers;
 using AccessManager.Application.Features.Users.GetUserByBadgeNumber;
+using AccessManager.Domain.Entities;
 using AccessManager.Infrastructure.Repositories;
 
 namespace AccessManager.ConsoleApp
@@ -16,6 +18,9 @@ namespace AccessManager.ConsoleApp
             var userRepository = new UserRepository();
             var accessZoneRepository = new AccessZoneRepository();
             var accessAttemptRepository = new AccessAttemptRepository();
+            
+            var getAllAccessAttempsHandler =
+                new GetAllAccessAttemptsHandler(accessAttemptRepository);
 
             var checkAccessHandler =
                 new CheckAccessHandler(
@@ -33,14 +38,17 @@ namespace AccessManager.ConsoleApp
                 checkAccessHandler,
                 getAllUsersHandler,
                 getUserByBadgeNumberHandler,
-                accessZoneRepository);
+                accessZoneRepository,
+                getAllAccessAttempsHandler);
         }
 
         private static void ShowMenu(
             CheckAccessHandler checkAccessHandler,
             GetAllUsersHandler getAllUsersHandler,
             GetUserByBadgeNumberHandler getUserByBadgeNumberHandler,
-            IAccessZoneRepository accessZoneRepository)
+            IAccessZoneRepository accessZoneRepository,
+            GetAllAccessAttemptsHandler getAllAccessAttempsHandler
+           )
         {
             while (true)
             {
@@ -49,6 +57,7 @@ namespace AccessManager.ConsoleApp
                 Console.WriteLine("1. Vérifier l'accès");
                 Console.WriteLine("2. Afficher tous les utilisateurs");
                 Console.WriteLine("3. Rechercher un utilisateur");
+                Console.WriteLine("4. Afficher les demandes d'accès");
                 Console.WriteLine("0. Quitter");
                 Console.Write("Choisissez une option : ");
 
@@ -69,6 +78,10 @@ namespace AccessManager.ConsoleApp
 
                     case "3":
                         GetUserByBadgeNumber(getUserByBadgeNumberHandler);
+                        break;
+
+                    case "4":
+                        GetAllAccessAttempts(getAllAccessAttempsHandler);
                         break;
 
                     case "0":
@@ -136,8 +149,7 @@ namespace AccessManager.ConsoleApp
             Console.WriteLine($"Résultat : {response.Result}");
         }
 
-        private static void GetAllUsers(
-            GetAllUsersHandler getAllUsersHandler)
+        private static void GetAllUsers(GetAllUsersHandler getAllUsersHandler)
         {
             var response =
                 getAllUsersHandler.Handle(
@@ -155,10 +167,9 @@ namespace AccessManager.ConsoleApp
             }
         }
 
-        private static void GetUserByBadgeNumber(
-            GetUserByBadgeNumberHandler getUserByBadgeNumberHandler)
+        private static void GetUserByBadgeNumber(GetUserByBadgeNumberHandler getUserByBadgeNumberHandler)
         {
-            Console.Write("Numéro de badge : ");
+            Console.Write("--- Numéro de badge : ");
 
             var badgeNumber = Console.ReadLine();
 
@@ -184,6 +195,22 @@ namespace AccessManager.ConsoleApp
             Console.WriteLine($"Badge : {user.BadgeNumber}");
             Console.WriteLine($"Niveau : {user.AccessLevel}");
             Console.WriteLine($"Statut : {(user.IsActive ? "Actif" : "Inactif")}");
+        }
+
+        private static void GetAllAccessAttempts(GetAllAccessAttemptsHandler getAllAccessAttemptsHandler)
+        {
+            var response = getAllAccessAttemptsHandler.Handle(new GetAllAccessAttemptsQuery());
+            Console.WriteLine("--- Demandes d'accès ---");
+
+            foreach (var attempt in response.AccessAttempts)
+            {
+                Console.WriteLine(
+                                        $"Badge : {attempt.BadgeNumber} | " +
+                                        $"Zone : {attempt.ZoneName} | " +
+                                        $"ZoneID : {attempt.AccessZoneId} | " +
+                                        $"Time : {attempt.AttemptTime} | " +
+                                        $"Niveau : {attempt.AccessResult}");
+            }
         }
     }
 }
