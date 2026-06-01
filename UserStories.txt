@@ -20,3 +20,37 @@ Le CheckAccessHandler :
 Le résultat est enregistré dans un AccessAttempt.
 
 L'Application retourne un CheckAccessResponse contenant un AccessResult.
+
+------------------------------------------------------------------------------------------------
+
+2 - Afficher la liste des utilisateurs
+
+Aucun argument n'est nécessaire dans la requête
+
+GetAllUsersHandler va chercher tous les éléments sous forme d'un IEnumerable
+L'application itère sur GetAllUsersResponse pour afficher les détails de chaque User
+
+------------------------------------------------------------------------------------------------
+
+3 - Rechercher un utilisateur par badge
+
+L'utilisateur saisit un numéro de badge.
+
+Application construit une GetUserByBadgeNumberQuery.
+
+GetUserByBadgeNumberHandler consulte IUserRepository.
+
+Retourne GetUserByBadgeNumberResponse.
+
+Afficher :
+- Nom
+- Prénom
+- Badge
+- AccessLevel
+- IsActive
+
+Si User == null :
+Afficher "Utilisateur introuvable".
+
+------------------------------------------------------------------------------------------------
+

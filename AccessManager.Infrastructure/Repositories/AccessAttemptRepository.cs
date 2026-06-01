@@ -12,12 +12,12 @@ namespace AccessManager.Infrastructure.Repositories
 
         public IEnumerable<AccessAttempt> GetAllAccessAttempt()
         {
-            throw new NotImplementedException();
+            return _accesAttempts;
         }
 
         public void SaveAccessAttempt(AccessAttempt accessAttempt)
         {
-            throw new NotImplementedException();
+            _accesAttempts.Add(accessAttempt);
         }
     }
 }
