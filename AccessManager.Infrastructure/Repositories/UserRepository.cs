@@ -26,5 +26,11 @@ namespace AccessManager.Infrastructure.Repositories
         {
             _users.Add(user);
         }
+
+        public void DisableUser(User user)
+        {
+            var existingUser = _users.FirstOrDefault(u => u.BadgeNumber == user.BadgeNumber);
+            if(existingUser != null) existingUser.IsActive = false;
+        }
     }
 }

@@ -11,5 +11,7 @@ namespace AccessManager.Application.Contracts
         User? GetUserByBadgeNumber(string badgeNumber);
         void CreateUser(User user);
 
+        void DisableUser(User user);
+
     }
 }

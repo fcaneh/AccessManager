@@ -8,6 +8,7 @@ using AccessManager.Application.Features.Users.GetUserByBadgeNumber;
 using AccessManager.Domain.Entities;
 using AccessManager.Infrastructure.Repositories;
 using AccessManager.Domain.Enums;
+using AccessManager.Application.Features.Users.DisableUser;
 
 namespace AccessManager.ConsoleApp
 {
@@ -39,13 +40,17 @@ namespace AccessManager.ConsoleApp
             var createUserHandler =
                 new CreateUserHandler(userRepository);
 
+            var disableUserHandler =
+                new DisableUserHandler(userRepository);
+
             ShowMenu(
                 checkAccessHandler,
                 getAllUsersHandler,
                 getUserByBadgeNumberHandler,
                 accessZoneRepository,
                 getAllAccessAttempsHandler,
-                createUserHandler);
+                createUserHandler,
+                disableUserHandler);
 
         }
 
@@ -55,7 +60,8 @@ namespace AccessManager.ConsoleApp
             GetUserByBadgeNumberHandler getUserByBadgeNumberHandler,
             IAccessZoneRepository accessZoneRepository,
             GetAllAccessAttemptsHandler getAllAccessAttempsHandler,
-            CreateUserHandler createUserHandler
+            CreateUserHandler createUserHandler,
+            DisableUserHandler disableUserHandler
            )
         {
             while (true)
@@ -67,6 +73,7 @@ namespace AccessManager.ConsoleApp
                 Console.WriteLine("3. Rechercher un utilisateur");
                 Console.WriteLine("4. Afficher les demandes d'accès");
                 Console.WriteLine("5. Créer un utilisateur");
+                Console.WriteLine("6. Désactiver un utilisateur");
                 Console.WriteLine("0. Quitter");
                 Console.Write("Choisissez une option : ");
 
@@ -95,6 +102,12 @@ namespace AccessManager.ConsoleApp
 
                     case "5":
                         CreateUser(createUserHandler);
+                        break;
+
+                    case "6":
+                        DisableUser(
+                            getAllUsersHandler,
+                            disableUserHandler);
                         break;
 
                     case "0":
@@ -257,6 +270,33 @@ namespace AccessManager.ConsoleApp
                 AccessLevel = accessLevel
             };
             var response = createUserHandler.Handle(command);
+            Console.WriteLine(response.Message);
+        }
+
+        private static void DisableUser( GetAllUsersHandler getAllUsersHandler,DisableUserHandler disableUserHandler)
+        {
+            Console.WriteLine();
+            Console.WriteLine("--- Désactiver un utilisateur ---");
+
+            Console.WriteLine();
+            Console.WriteLine("--- Utilisateurs disponibles ---");
+
+            var users = getAllUsersHandler.Handle(new GetAllUsersQuery());
+
+            foreach (var user in users.Users)
+            {
+                Console.WriteLine(
+                    $"{user.FirstName} {user.LastName} | " +
+                    $"Badge : {user.BadgeNumber} ");
+            } 
+
+            Console.Write("Numéro de badge : ");
+            var badgeNumber = Console.ReadLine();
+            var command = new DisableUserCommand
+            {
+                BadgeNumber = badgeNumber ?? string.Empty
+            };
+            var response = disableUserHandler.Handle(command);
             Console.WriteLine(response.Message);
         }
     }
