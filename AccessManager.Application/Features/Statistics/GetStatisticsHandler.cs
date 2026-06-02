@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AccessManager.Application.Contracts;
+﻿using AccessManager.Application.Contracts;
 using AccessManager.Domain.Enums;
 
 namespace AccessManager.Application.Features.Statistics
@@ -18,7 +15,7 @@ namespace AccessManager.Application.Features.Statistics
         }
 
 
-        public GetStatisticsResponse Handle(GetStatisticsQuery  query)
+        public GetStatisticsResponse Handle(GetStatisticsQuery query)
         {
             var users = _userRepository.GetAllUsers().ToList();
             var accessAttempts = _attemptRepository.GetAllAccessAttempts().ToList();

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.AccessControl;
-using System.Text;
-using AccessManager.Application.Contracts;
-using AccessManager.Application.Features.Users.GetUserByBadgeNumber;
+﻿using AccessManager.Application.Contracts;
 using AccessManager.Domain.Entities;
 using AccessManager.Domain.Enums;
 
@@ -14,10 +9,10 @@ namespace AccessManager.Application.Features.Access.CheckAccess
         private readonly IUserRepository _userRepository;
         private readonly IAccessZoneRepository _accessZoneRepository;
         private readonly IAccessAttemptRepository _accessAttemptRepository;
-        
+
         public CheckAccessHandler(
-            IUserRepository userRepository, 
-            IAccessZoneRepository accessZoneRepository, 
+            IUserRepository userRepository,
+            IAccessZoneRepository accessZoneRepository,
             IAccessAttemptRepository accessAttemptRepository
             )
         {
@@ -68,7 +63,7 @@ namespace AccessManager.Application.Features.Access.CheckAccess
                 accessAttempt.AccessResult = AccessResult.InsufficientAccessLevel;
                 return SaveAndReturn(accessAttempt);
             }
-    
+
 
             accessAttempt.AccessResult = AccessResult.Granted;
             return SaveAndReturn(accessAttempt);

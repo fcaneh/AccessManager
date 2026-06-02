@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AccessManager.Domain.Enums;
+﻿using AccessManager.Domain.Enums;
 
 namespace AccessManager.Application.Features.Users.CreateUser
 {

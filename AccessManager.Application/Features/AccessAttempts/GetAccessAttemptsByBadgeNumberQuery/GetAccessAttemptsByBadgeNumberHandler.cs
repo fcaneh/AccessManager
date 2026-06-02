@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AccessManager.Application.Contracts;
+﻿using AccessManager.Application.Contracts;
 
-namespace AccessManager.Application.Features.AccessAttemps.GetAccessAttemptsByBadgeNumberQuery
+namespace AccessManager.Application.Features.AccessAttempts.GetAccessAttemptsByBadgeNumber
 {
     public class GetAccessAttemptsByBadgeNumberHandler
     {
