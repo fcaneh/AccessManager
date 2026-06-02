@@ -87,3 +87,23 @@ Sinon :
     Création du User
     Sauvegarde dans UserRepository
     Retour Success
+
+------------------------------------------------------------------------------------------------
+
+6 - Afficher l'historique des accès d'un utilisateur
+
+L'utilisateur saisit un numéro de badge.
+
+Le système récupère toutes les tentatives d'accès
+associées à ce badge.
+
+Le système affiche :
+- la date de la tentative
+- la zone concernée
+- le résultat de la demande d'accès
+
+Si aucune tentative n'existe,
+un message est affiché.
+
+------------------------------------------------------------------------------------------------
+
