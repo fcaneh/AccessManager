@@ -1,16 +1,14 @@
-﻿using System;
-using AccessManager.Application.Contracts;
+﻿using AccessManager.Application.Contracts;
 using AccessManager.Application.Features.Access.CheckAccess;
-using AccessManager.Application.Features.AccessAttemps.GetAllAccessAttemps;
+using AccessManager.Application.Features.AccessAttempts.GetAccessAttemptsByBadgeNumber;
+using AccessManager.Application.Features.AccessAttempts.GetAllAccessAttempts;
+using AccessManager.Application.Features.Statistics;
 using AccessManager.Application.Features.Users.CreateUser;
+using AccessManager.Application.Features.Users.DisableUser;
 using AccessManager.Application.Features.Users.GetAllUsers;
 using AccessManager.Application.Features.Users.GetUserByBadgeNumber;
-using AccessManager.Domain.Entities;
-using AccessManager.Infrastructure.Repositories;
 using AccessManager.Domain.Enums;
-using AccessManager.Application.Features.Users.DisableUser;
-using AccessManager.Application.Features.Statistics;
-using AccessManager.Application.Features.AccessAttemps.GetAccessAttemptsByBadgeNumberQuery;
+using AccessManager.Infrastructure.Repositories;
 
 namespace AccessManager.ConsoleApp
 {
@@ -24,7 +22,7 @@ namespace AccessManager.ConsoleApp
             var accessZoneRepository = new AccessZoneRepository();
             var accessAttemptRepository = new AccessAttemptRepository();
 
-            var getAllAccessAttempsHandler =
+            var getAllAccessAttemptsHandler =
                 new GetAllAccessAttemptsHandler(accessAttemptRepository);
 
             var checkAccessHandler =
@@ -56,7 +54,7 @@ namespace AccessManager.ConsoleApp
                 getAllUsersHandler,
                 getUserByBadgeNumberHandler,
                 accessZoneRepository,
-                getAllAccessAttempsHandler,
+                getAllAccessAttemptsHandler,
                 createUserHandler,
                 disableUserHandler,
                 getStatisticsHandler,
@@ -69,7 +67,7 @@ namespace AccessManager.ConsoleApp
             GetAllUsersHandler getAllUsersHandler,
             GetUserByBadgeNumberHandler getUserByBadgeNumberHandler,
             IAccessZoneRepository accessZoneRepository,
-            GetAllAccessAttemptsHandler getAllAccessAttempsHandler,
+            GetAllAccessAttemptsHandler getAllAccessAttemptsHandler,
             CreateUserHandler createUserHandler,
             DisableUserHandler disableUserHandler,
             GetStatisticsHandler getStatisticsHandler,
@@ -80,14 +78,10 @@ namespace AccessManager.ConsoleApp
             {
                 Console.WriteLine();
                 Console.WriteLine("--- Menu ---");
-                Console.WriteLine("1. Vérifier l'accès");
-                Console.WriteLine("2. Afficher tous les utilisateurs");
-                Console.WriteLine("3. Rechercher un utilisateur");
-                Console.WriteLine("4. Afficher les demandes d'accès");
-                Console.WriteLine("5. Créer un utilisateur");
-                Console.WriteLine("6. Désactiver un utilisateur");
-                Console.WriteLine("7. Afficher les statistiques");
-                Console.WriteLine("8. Afficher l'historique d'accès d'un utilisateur");
+                Console.WriteLine("1. Simuler une demande d'accès");
+                Console.WriteLine("2. Accéder au menu Utilisateurs");
+                Console.WriteLine("3. Accéder au menu des demandes d'accès");
+                Console.WriteLine("4. Afficher les statistiques");
                 Console.WriteLine("0. Quitter");
                 Console.Write("Choisissez une option : ");
 
@@ -103,34 +97,17 @@ namespace AccessManager.ConsoleApp
                         break;
 
                     case "2":
-                        GetAllUsers(getAllUsersHandler);
+                        ShowUsersMenu(getAllUsersHandler, getUserByBadgeNumberHandler, createUserHandler, disableUserHandler);
                         break;
 
+
                     case "3":
-                        GetUserByBadgeNumber(getUserByBadgeNumberHandler);
+                        ShowAccessAttemptsMenu(getAllAccessAttemptsHandler, getAccessAttemptsByBadgeNumberHandler, getAllUsersHandler);
                         break;
 
                     case "4":
-                        GetAllAccessAttempts(getAllAccessAttempsHandler);
-                        break;
-
-                    case "5":
-                        CreateUser(createUserHandler);
-                        break;
-
-                    case "6":
-                        DisableUser(
-                            getAllUsersHandler,
-                            disableUserHandler);
-                        break;
-
-                    case "7":
                         ShowStatistics(getStatisticsHandler);
                         break;
-
-                    case "8":
-                    AccessAttemptsByBadgeNumber(getAccessAttemptsByBadgeNumberHandler, getAllUsersHandler);
-                    break;
 
                     case "0":
                         return;
@@ -147,18 +124,7 @@ namespace AccessManager.ConsoleApp
             GetAllUsersHandler getAllUsersHandler,
             IAccessZoneRepository accessZoneRepository)
         {
-            Console.WriteLine();
-            Console.WriteLine("--- Utilisateurs disponibles ---");
-
-            var usersResponse = getAllUsersHandler.Handle(new GetAllUsersQuery());
-
-            foreach (var user in usersResponse.Users)
-            {
-                Console.WriteLine(
-                    $"{user.FirstName} {user.LastName} | " +
-                    $"Badge : {user.BadgeNumber} | " +
-                    $"Niveau : {user.AccessLevel}");
-            }
+            DisplayUsers(getAllUsersHandler);
 
             Console.WriteLine();
             Console.WriteLine("--- Zones disponibles ---");
@@ -199,20 +165,7 @@ namespace AccessManager.ConsoleApp
 
         private static void GetAllUsers(GetAllUsersHandler getAllUsersHandler)
         {
-            var response =
-                getAllUsersHandler.Handle(
-                    new GetAllUsersQuery());
-
-            Console.WriteLine();
-            Console.WriteLine("--- Utilisateurs ---");
-
-            foreach (var user in response.Users)
-            {
-                Console.WriteLine(
-                    $"{user.FirstName} {user.LastName} | " +
-                    $"Badge : {user.BadgeNumber} | " +
-                    $"Niveau : {user.AccessLevel}");
-            }
+            DisplayUsers(getAllUsersHandler);
         }
 
         private static void GetUserByBadgeNumber(GetUserByBadgeNumberHandler getUserByBadgeNumberHandler)
@@ -243,22 +196,6 @@ namespace AccessManager.ConsoleApp
             Console.WriteLine($"Badge : {user.BadgeNumber}");
             Console.WriteLine($"Niveau : {user.AccessLevel}");
             Console.WriteLine($"Statut : {(user.IsActive ? "Actif" : "Inactif")}");
-        }
-
-        private static void GetAllAccessAttempts(GetAllAccessAttemptsHandler getAllAccessAttemptsHandler)
-        {
-            var response = getAllAccessAttemptsHandler.Handle(new GetAllAccessAttemptsQuery());
-            Console.WriteLine("--- Demandes d'accès ---");
-
-            foreach (var attempt in response.AccessAttempts)
-            {
-                Console.WriteLine(
-                                        $"Badge : {attempt.BadgeNumber} | " +
-                                        $"Zone : {attempt.ZoneName} | " +
-                                        $"ZoneID : {attempt.AccessZoneId} | " +
-                                        $"Time : {attempt.AttemptTime} | " +
-                                        $"Niveau : {attempt.AccessResult}");
-            }
         }
 
         private static void CreateUser(CreateUserHandler createUserHandler)
@@ -297,20 +234,10 @@ namespace AccessManager.ConsoleApp
 
         private static void DisableUser(GetAllUsersHandler getAllUsersHandler, DisableUserHandler disableUserHandler)
         {
+            DisplayUsers(getAllUsersHandler);
+
             Console.WriteLine();
             Console.WriteLine("--- Désactiver un utilisateur ---");
-
-            Console.WriteLine();
-            Console.WriteLine("--- Utilisateurs disponibles ---");
-
-            var users = getAllUsersHandler.Handle(new GetAllUsersQuery());
-
-            foreach (var user in users.Users)
-            {
-                Console.WriteLine(
-                    $"{user.FirstName} {user.LastName} | " +
-                    $"Badge : {user.BadgeNumber} ");
-            }
 
             Console.Write("Numéro de badge : ");
             var badgeNumber = Console.ReadLine();
@@ -322,6 +249,52 @@ namespace AccessManager.ConsoleApp
             Console.WriteLine(response.Message);
         }
 
+        private static void GetAllAccessAttempts(GetAllAccessAttemptsHandler getAllAccessAttemptsHandler)
+        {
+            var response = getAllAccessAttemptsHandler.Handle(new GetAllAccessAttemptsQuery());
+            Console.WriteLine("--- Demandes d'accès ---");
+
+            foreach (var attempt in response.AccessAttempts)
+            {
+                Console.WriteLine(
+                                        $"Badge : {attempt.BadgeNumber} | " +
+                                        $"Zone : {attempt.ZoneName} | " +
+                                        $"ZoneID : {attempt.AccessZoneId} | " +
+                                        $"Time : {attempt.AttemptTime} | " +
+                                        $"Niveau : {attempt.AccessResult}");
+            }
+        }
+
+
+        private static void AccessAttemptsByBadgeNumber(GetAccessAttemptsByBadgeNumberHandler getAccessAttemptsByBadgeNumberHandler, GetAllUsersHandler getAllUsersHandler)
+        {
+            DisplayUsers(getAllUsersHandler);
+
+            Console.Write("--- Numéro de badge : ");
+            var badgeNumber = Console.ReadLine();
+
+            var query = new GetAccessAttemptsByBadgeNumberQuery
+            {
+                BadgeNumber = badgeNumber ?? string.Empty
+            };
+
+            var response = getAccessAttemptsByBadgeNumberHandler.Handle(query);
+
+            if (!response.AccessAttempts.Any())
+            {
+                Console.WriteLine("Aucune demande d'accès trouvée");
+                return;
+            }
+
+            foreach (var attempt in response.AccessAttempts)
+            {
+                Console.WriteLine(
+                    $"Zone : {attempt.ZoneName} | " +
+                    $"Time : {attempt.AttemptTime} | " +
+                    $"Résultat : {attempt.AccessResult}");
+            }
+            ;
+        }
         private static void ShowStatistics(GetStatisticsHandler getStatisticsHandler)
         {
             var response = getStatisticsHandler.Handle(new GetStatisticsQuery());
@@ -336,7 +309,7 @@ namespace AccessManager.ConsoleApp
             Console.WriteLine($"Zone ayant reçu le plus de demandes d'accès : {response.MostUsedZone}");
         }
 
-        private static void AccessAttemptsByBadgeNumber(GetAccessAttemptsByBadgeNumberHandler getAccessAttemptsByBadgeNumberHandler, GetAllUsersHandler getAllUsersHandler)
+        private static void DisplayUsers(GetAllUsersHandler getAllUsersHandler)
         {
             Console.WriteLine();
             Console.WriteLine("--- Utilisateurs disponibles ---");
@@ -350,29 +323,72 @@ namespace AccessManager.ConsoleApp
                     $"Badge : {user.BadgeNumber} | " +
                     $"Niveau : {user.AccessLevel}");
             }
-            Console.Write("--- Numéro de badge : ");
-            var badgeNumber = Console.ReadLine();
+        }
 
-            var query = new GetAccessAttemptsByBadgeNumberQuery
+        private static void ShowUsersMenu(GetAllUsersHandler getAllUsersHandler, GetUserByBadgeNumberHandler getUserByBadgeNumberHandler, CreateUserHandler createUserHandler, DisableUserHandler disableUserHandler)
+        {
+            while (true)
             {
-                BadgeNumber = badgeNumber ?? string.Empty
-            };
+                Console.WriteLine();
+                Console.WriteLine("--- Menu Utilisateurs ---");
+                Console.WriteLine("1. Afficher tous les utilisateurs");
+                Console.WriteLine("2. Rechercher un utilisateur par numéro de badge");
+                Console.WriteLine("3. Créer un nouvel utilisateur");
+                Console.WriteLine("4. Désactiver un utilisateur");
+                Console.WriteLine("0. Retour au menu principal");
+                Console.Write("Choisissez une option : ");
+                var choice = Console.ReadLine();
+                switch (choice)
+                {
+                    case "1":
+                        GetAllUsers(getAllUsersHandler);
+                        break;
+                    case "2":
+                        GetUserByBadgeNumber(getUserByBadgeNumberHandler);
+                        break;
+                    case "3":
+                        CreateUser(createUserHandler);
+                        break;
+                    case "4":
+                        DisableUser(getAllUsersHandler, disableUserHandler);
+                        break;
 
-            var response = getAccessAttemptsByBadgeNumberHandler.Handle(query);
-
-            if (response == null)
-            {
-                Console.WriteLine("Utilisateur non trouvé.");
-                return;
+                    case "0":
+                        return;
+                    default:
+                        Console.WriteLine("Option invalide");
+                        break;
+                }
             }
+        }
 
-            foreach(var attempt in response.AccessAttempts)
+        private static void ShowAccessAttemptsMenu(GetAllAccessAttemptsHandler getAllAccessAttemptsHandler, GetAccessAttemptsByBadgeNumberHandler getAccessAttemptsByBadgeNumberHandler, GetAllUsersHandler getAllUsersHandler)
+        {
+            while (true)
             {
-                Console.WriteLine(
-                    $"Zone : {attempt.ZoneName} | " +
-                    $"Time : {attempt.AttemptTime} | " +
-                    $"Résultat : {attempt.AccessResult}");
-            };                
+                Console.WriteLine();
+                Console.WriteLine("--- Menu Demandes d'accès ---");
+                Console.WriteLine("1. Afficher toutes les demandes d'accès");
+                Console.WriteLine("2. Afficher les demandes d'accès par numéro de badge");
+                Console.WriteLine("0. Retour au menu principal");
+
+                Console.Write("Choisissez une option : ");
+                var choice = Console.ReadLine();
+                switch (choice)
+                {
+                    case "1":
+                        GetAllAccessAttempts(getAllAccessAttemptsHandler);
+                        break;
+                    case "2":
+                        AccessAttemptsByBadgeNumber(getAccessAttemptsByBadgeNumberHandler, getAllUsersHandler);
+                        break;
+                    case "0":
+                        return;
+                    default:
+                        Console.WriteLine("Option invalide");
+                        break;
+                }
+            }
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AccessManager.Application.Contracts;
+﻿using AccessManager.Application.Contracts;
 
 namespace AccessManager.Application.Features.Users.GetUserByBadgeNumber
 {

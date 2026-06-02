@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AccessManager.Application.Contracts;
+﻿using AccessManager.Application.Contracts;
 
 namespace AccessManager.Application.Features.Users.GetAllUsers
 {
@@ -9,7 +6,7 @@ namespace AccessManager.Application.Features.Users.GetAllUsers
     {
         private readonly IUserRepository _userRepository;
 
-        public GetAllUsersHandler(IUserRepository userRepository) 
+        public GetAllUsersHandler(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }

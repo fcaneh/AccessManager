@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AccessManager.Application.Contracts;
+﻿using AccessManager.Application.Contracts;
 
-namespace AccessManager.Application.Features.AccessAttemps.GetAllAccessAttemps
+namespace AccessManager.Application.Features.AccessAttempts.GetAllAccessAttempts
 {
     public class GetAllAccessAttemptsHandler
     {
@@ -14,9 +11,9 @@ namespace AccessManager.Application.Features.AccessAttemps.GetAllAccessAttemps
             _accessAttemptRepository = accessAttemptRepository;
         }
 
-        public GetAllAccessAttempsResponse Handle(GetAllAccessAttemptsQuery request)
+        public GetAllAccessAttemptsResponse Handle(GetAllAccessAttemptsQuery request)
         {
-            return new GetAllAccessAttempsResponse
+            return new GetAllAccessAttemptsResponse
             {
                 AccessAttempts = _accessAttemptRepository.GetAllAccessAttempts()
             };

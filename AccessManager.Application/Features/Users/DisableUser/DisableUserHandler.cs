@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AccessManager.Application.Contracts;
+﻿using AccessManager.Application.Contracts;
 
 namespace AccessManager.Application.Features.Users.DisableUser
 {
-    public  class DisableUserHandler
+    public class DisableUserHandler
     {
         public readonly IUserRepository _userRepository;
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AccessManager.Application.Contracts;
+﻿using AccessManager.Application.Contracts;
 
 namespace AccessManager.Application.Features.Users.CreateUser
 {
@@ -38,7 +35,7 @@ namespace AccessManager.Application.Features.Users.CreateUser
             };
 
             _userRepository.CreateUser(newUser);
-            
+
             return new CreateUserResponse
             {
                 Success = true,
