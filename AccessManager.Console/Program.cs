@@ -10,6 +10,7 @@ using AccessManager.Infrastructure.Repositories;
 using AccessManager.Domain.Enums;
 using AccessManager.Application.Features.Users.DisableUser;
 using AccessManager.Application.Features.Statistics;
+using AccessManager.Application.Features.AccessAttemps.GetAccessAttemptsByBadgeNumberQuery;
 
 namespace AccessManager.ConsoleApp
 {
@@ -47,6 +48,9 @@ namespace AccessManager.ConsoleApp
             var getStatisticsHandler =
                 new GetStatisticsHandler(userRepository, accessAttemptRepository);
 
+            var getAccessAttemptsByBadgeNumberHandler =
+                new GetAccessAttemptsByBadgeNumberHandler(accessAttemptRepository);
+
             ShowMenu(
                 checkAccessHandler,
                 getAllUsersHandler,
@@ -55,7 +59,8 @@ namespace AccessManager.ConsoleApp
                 getAllAccessAttempsHandler,
                 createUserHandler,
                 disableUserHandler,
-                getStatisticsHandler);
+                getStatisticsHandler,
+                getAccessAttemptsByBadgeNumberHandler);
 
         }
 
@@ -67,7 +72,8 @@ namespace AccessManager.ConsoleApp
             GetAllAccessAttemptsHandler getAllAccessAttempsHandler,
             CreateUserHandler createUserHandler,
             DisableUserHandler disableUserHandler,
-            GetStatisticsHandler getStatisticsHandler
+            GetStatisticsHandler getStatisticsHandler,
+            GetAccessAttemptsByBadgeNumberHandler getAccessAttemptsByBadgeNumberHandler
            )
         {
             while (true)
@@ -81,6 +87,7 @@ namespace AccessManager.ConsoleApp
                 Console.WriteLine("5. Créer un utilisateur");
                 Console.WriteLine("6. Désactiver un utilisateur");
                 Console.WriteLine("7. Afficher les statistiques");
+                Console.WriteLine("8. Afficher l'historique d'accès d'un utilisateur");
                 Console.WriteLine("0. Quitter");
                 Console.Write("Choisissez une option : ");
 
@@ -120,6 +127,10 @@ namespace AccessManager.ConsoleApp
                     case "7":
                         ShowStatistics(getStatisticsHandler);
                         break;
+
+                    case "8":
+                    AccessAttemptsByBadgeNumber(getAccessAttemptsByBadgeNumberHandler, getAllUsersHandler);
+                    break;
 
                     case "0":
                         return;
@@ -323,6 +334,45 @@ namespace AccessManager.ConsoleApp
             Console.WriteLine($"Nombre total d'accès autorisés : {response.GrantedAccessAttempts}");
             Console.WriteLine($"Nombre total d'accès refusés : {response.DeniedAccessAttempts}");
             Console.WriteLine($"Zone ayant reçu le plus de demandes d'accès : {response.MostUsedZone}");
+        }
+
+        private static void AccessAttemptsByBadgeNumber(GetAccessAttemptsByBadgeNumberHandler getAccessAttemptsByBadgeNumberHandler, GetAllUsersHandler getAllUsersHandler)
+        {
+            Console.WriteLine();
+            Console.WriteLine("--- Utilisateurs disponibles ---");
+
+            var usersResponse = getAllUsersHandler.Handle(new GetAllUsersQuery());
+
+            foreach (var user in usersResponse.Users)
+            {
+                Console.WriteLine(
+                    $"{user.FirstName} {user.LastName} | " +
+                    $"Badge : {user.BadgeNumber} | " +
+                    $"Niveau : {user.AccessLevel}");
+            }
+            Console.Write("--- Numéro de badge : ");
+            var badgeNumber = Console.ReadLine();
+
+            var query = new GetAccessAttemptsByBadgeNumberQuery
+            {
+                BadgeNumber = badgeNumber ?? string.Empty
+            };
+
+            var response = getAccessAttemptsByBadgeNumberHandler.Handle(query);
+
+            if (response == null)
+            {
+                Console.WriteLine("Utilisateur non trouvé.");
+                return;
+            }
+
+            foreach(var attempt in response.AccessAttempts)
+            {
+                Console.WriteLine(
+                    $"Zone : {attempt.ZoneName} | " +
+                    $"Time : {attempt.AttemptTime} | " +
+                    $"Résultat : {attempt.AccessResult}");
+            };                
         }
     }
 }
