@@ -4,7 +4,7 @@ using AccessManager.Application.Features.AccessAttempts.GetAccessAttemptsByBadge
 using AccessManager.Application.Features.AccessAttempts.GetAllAccessAttempts;
 using AccessManager.Application.Features.Statistics;
 using AccessManager.Application.Features.Users.CreateUser;
-using AccessManager.Application.Features.Users.DisableUser;
+using AccessManager.Application.Features.Users.ToggleStatusUser;
 using AccessManager.Application.Features.Users.GetAllUsers;
 using AccessManager.Application.Features.Users.GetUserByBadgeNumber;
 using AccessManager.Domain.Enums;
@@ -41,7 +41,7 @@ namespace AccessManager.ConsoleApp
                 new CreateUserHandler(userRepository);
 
             var disableUserHandler =
-                new DisableUserHandler(userRepository);
+                new ToggleStatusUserHandler(userRepository);
 
             var getStatisticsHandler =
                 new GetStatisticsHandler(userRepository, accessAttemptRepository);
@@ -69,7 +69,7 @@ namespace AccessManager.ConsoleApp
             IAccessZoneRepository accessZoneRepository,
             GetAllAccessAttemptsHandler getAllAccessAttemptsHandler,
             CreateUserHandler createUserHandler,
-            DisableUserHandler disableUserHandler,
+            ToggleStatusUserHandler disableUserHandler,
             GetStatisticsHandler getStatisticsHandler,
             GetAccessAttemptsByBadgeNumberHandler getAccessAttemptsByBadgeNumberHandler
            )
@@ -168,8 +168,10 @@ namespace AccessManager.ConsoleApp
             DisplayUsers(getAllUsersHandler);
         }
 
-        private static void GetUserByBadgeNumber(GetUserByBadgeNumberHandler getUserByBadgeNumberHandler)
+        private static void GetUserByBadgeNumber(GetUserByBadgeNumberHandler getUserByBadgeNumberHandler, GetAllUsersHandler getAllUsersHandler)
         {
+            DisplayUsers(getAllUsersHandler);
+
             Console.Write("--- Numéro de badge : ");
 
             var badgeNumber = Console.ReadLine();
@@ -232,7 +234,7 @@ namespace AccessManager.ConsoleApp
             Console.WriteLine(response.Message);
         }
 
-        private static void DisableUser(GetAllUsersHandler getAllUsersHandler, DisableUserHandler disableUserHandler)
+        private static void DisableUser(GetAllUsersHandler getAllUsersHandler, ToggleStatusUserHandler disableUserHandler)
         {
             DisplayUsers(getAllUsersHandler);
 
@@ -241,7 +243,7 @@ namespace AccessManager.ConsoleApp
 
             Console.Write("Numéro de badge : ");
             var badgeNumber = Console.ReadLine();
-            var command = new DisableUserCommand
+            var command = new ToggleStatusUserCommand
             {
                 BadgeNumber = badgeNumber ?? string.Empty
             };
@@ -321,11 +323,12 @@ namespace AccessManager.ConsoleApp
                 Console.WriteLine(
                     $"{user.FirstName} {user.LastName} | " +
                     $"Badge : {user.BadgeNumber} | " +
-                    $"Niveau : {user.AccessLevel}");
+                    $"Niveau : {user.AccessLevel} | " +
+                    $"Statut : {(user.IsActive ? "Actif" : "Inactif")}");
             }
         }
 
-        private static void ShowUsersMenu(GetAllUsersHandler getAllUsersHandler, GetUserByBadgeNumberHandler getUserByBadgeNumberHandler, CreateUserHandler createUserHandler, DisableUserHandler disableUserHandler)
+        private static void ShowUsersMenu(GetAllUsersHandler getAllUsersHandler, GetUserByBadgeNumberHandler getUserByBadgeNumberHandler, CreateUserHandler createUserHandler, ToggleStatusUserHandler disableUserHandler)
         {
             while (true)
             {
@@ -334,7 +337,7 @@ namespace AccessManager.ConsoleApp
                 Console.WriteLine("1. Afficher tous les utilisateurs");
                 Console.WriteLine("2. Rechercher un utilisateur par numéro de badge");
                 Console.WriteLine("3. Créer un nouvel utilisateur");
-                Console.WriteLine("4. Désactiver un utilisateur");
+                Console.WriteLine("4. Activer / Désactiver un utilisateur");
                 Console.WriteLine("0. Retour au menu principal");
                 Console.Write("Choisissez une option : ");
                 var choice = Console.ReadLine();

@@ -7,8 +7,6 @@ namespace AccessManager.Application.Contracts
         IEnumerable<User> GetAllUsers();
         User? GetUserByBadgeNumber(string badgeNumber);
         void CreateUser(User user);
-
-        void DisableUser(User user);
-
+        void ToggleStatusUser(User user);
     }
 }
