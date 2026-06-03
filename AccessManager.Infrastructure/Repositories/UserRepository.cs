@@ -27,18 +27,11 @@ namespace AccessManager.Infrastructure.Repositories
             _users.Add(user);
         }
 
-        public void DisableUser(User user)
+        public void ToggleStatusUser(User user)
         {
-            // Version qui serait nécessaire avec une copie des objets :
-            //
-            // var existingUser = _users.FirstOrDefault(
-            //     u => u.BadgeNumber == user.BadgeNumber);
-            //
-            // if (existingUser != null)
-            // {
-            //     existingUser.IsActive = false;
-            // }
-            // ainsi que dans le cas d'une base de données, il faudrait faire une mise à jour de l'entité.
+            // Aucune action nécessaire.
+            // User est déjà une référence vers l'objet stocké dans la collection.
+            // Dans une implémentation EF Core ou SQL, cette méthode effectuerait la persistance.
         }
     }
 }

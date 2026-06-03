@@ -1,6 +1,6 @@
-﻿namespace AccessManager.Application.Features.Users.DisableUser
+﻿namespace AccessManager.Application.Features.Users.ToggleStatusUser
 {
-    public record DisableUserResponse
+    public record ToggleStatusUserResponse
     {
         public bool Success { get; init; }
         public string Message { get; init; } = string.Empty;
